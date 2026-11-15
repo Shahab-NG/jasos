@@ -1,10 +1,10 @@
 import {readdir,readFile,writeFile} from 'node:fs/promises'
 import {createHash} from 'node:crypto'
 const assets=(await readdir('dist/assets')).sort().map(name=>'/assets/'+name)
-const cache='jasos-'+createHash('sha256').update(assets.join('|')).update(await readFile('dist/index.html')).update(await readFile('dist/app.webmanifest')).update(await readFile('dist/jasos-logo.png')).digest('hex').slice(0,16)
+const cache='jasos-'+createHash('sha256').update(assets.join('|')).update(await readFile('dist/index.html')).update(await readFile('dist/app.webmanifest')).update(await readFile('dist/jasos-logo.png')).update(await readFile('dist/jasos-logo.jpg')).digest('hex').slice(0,16)
 await writeFile('dist/sw.js',`
 const cacheName=${JSON.stringify(cache)}
-const files=${JSON.stringify(['/', '/app.webmanifest', '/jasos-logo.png', ...assets])}
+const files=${JSON.stringify(['/', '/app.webmanifest', '/jasos-logo.png', '/jasos-logo.jpg', ...assets])}
 self.addEventListener('install',event=>event.waitUntil(caches.open(cacheName).then(cache=>cache.addAll(files))))
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('jasos-')&&key!==cacheName).map(key=>caches.delete(key))))))
 self.addEventListener('fetch',event=>{
