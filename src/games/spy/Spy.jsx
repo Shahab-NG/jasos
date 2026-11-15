@@ -5,16 +5,16 @@ import RoleCard from './components/RoleCard'
 import Discussion from './components/Discussion'
 import Vote from './components/Vote'
 import Outcome from './components/Outcome'
-import {createRound,defaults,matchesWord,read,save} from './model'
+import {createRound,defaults,read,restoreGame,save,voteWinner} from './model'
 
 export default function Spy(){
-  const [game,setGame]=useState(()=>({settings:defaults,round:null,used:[],...read()}))
+  const [game,setGame]=useState(()=>({settings:defaults,round:null,used:[],...restoreGame(read())}))
   const [confirmExit,setConfirmExit]=useState(false)
   const {settings,round,used}=game
   useEffect(()=>save(game),[game])
   function start(){
     setConfirmExit(false)
-    setGame({...game,...createRound(settings,used)})
+    setGame({...game,...createRound(settings,used,game.spyQueue,round?.spies)})
     window.scrollTo(0,0)
   }
   const change=fields=>setGame({...game,round:{...round,...fields}})
@@ -27,12 +27,8 @@ export default function Spy(){
       else change({stage:'discussion',deadline:settings.minutes?Date.now()+settings.minutes*60000:null})
     }}/>}
     {round.stage==='discussion'&&<Discussion deadline={round.deadline} onVote={()=>change({stage:'vote'})}/>}
-    {round.stage==='vote'&&<Vote round={round} onVote={suspects=>{
-      const allSpiesFound=round.spies.length===suspects.length&&round.spies.every(id=>suspects.includes(id))
-      if(allSpiesFound)change({stage:'guess'})
-      else finishRound('spies')
-    }}/>} 
-    {['guess','result'].includes(round.stage)&&<Outcome round={round} onGuess={guess=>finishRound(matchesWord(guess,round.word)?'spies':'citizens')} onSkipGuess={()=>finishRound('citizens')} start={start} reset={reset}/>}
+    {round.stage==='vote'&&<Vote round={round} onVote={suspects=>finishRound(voteWinner(round.spies,suspects))}/>}
+    {round.stage==='result'&&<Outcome round={round} start={start} reset={reset}/>}
     {round.stage!=='result'&&(confirmExit?<div className="mt-4 rounded-lg border border-slate-600 p-3"><p className="mb-2 text-sm">این دور پایان پیدا کند؟</p><div className="flex justify-center gap-2"><button className="control" onClick={reset}>پایان دور</button><button className="control" onClick={()=>setConfirmExit(false)}>ادامه بازی</button></div></div>:<button className="mt-4 min-h-10 text-sm text-slate-300 underline" onClick={()=>setConfirmExit(true)}>خروج از دور</button>)}
   </section>
 }
