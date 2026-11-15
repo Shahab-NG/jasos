@@ -18,6 +18,7 @@ export default function Spy(){
     window.scrollTo(0,0)
   }
   const change=fields=>setGame({...game,round:{...round,...fields}})
+  const finishRound=winner=>change({stage:'result',winner})
   const reset=()=>{setConfirmExit(false);setGame({...game,round:null})}
   if(!round)return <><Setup settings={settings} update={fields=>setGame({...game,settings:{...settings,...fields}})} start={start}/><Guide/></>
   return <section className="panel mx-auto max-w-[680px] text-center" aria-label="دور جاری">
@@ -28,9 +29,10 @@ export default function Spy(){
     {round.stage==='discussion'&&<Discussion deadline={round.deadline} onVote={()=>change({stage:'vote'})}/>}
     {round.stage==='vote'&&<Vote round={round} onVote={suspects=>{
       const allSpiesFound=round.spies.length===suspects.length&&round.spies.every(id=>suspects.includes(id))
-      change(allSpiesFound?{stage:'guess'}:{stage:'result',winner:'spies'})
+      if(allSpiesFound)change({stage:'guess'})
+      else finishRound('spies')
     }}/>} 
-    {['guess','result'].includes(round.stage)&&<Outcome round={round} onGuess={guess=>change({stage:'result',winner:matchesWord(guess,round.word)?'spies':'citizens'})} start={start} reset={reset}/>} 
+    {['guess','result'].includes(round.stage)&&<Outcome round={round} onGuess={guess=>finishRound(matchesWord(guess,round.word)?'spies':'citizens')} onSkipGuess={()=>finishRound('citizens')} start={start} reset={reset}/>}
     {round.stage!=='result'&&(confirmExit?<div className="mt-4 rounded-lg border border-slate-600 p-3"><p className="mb-2 text-sm">این دور پایان پیدا کند؟</p><div className="flex justify-center gap-2"><button className="control" onClick={reset}>پایان دور</button><button className="control" onClick={()=>setConfirmExit(false)}>ادامه بازی</button></div></div>:<button className="mt-4 min-h-10 text-sm text-slate-300 underline" onClick={()=>setConfirmExit(true)}>خروج از دور</button>)}
   </section>
 }
