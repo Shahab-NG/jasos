@@ -18,7 +18,7 @@ export default function Spy(){
     window.scrollTo(0,0)
   }
   const change=fields=>setGame({...game,round:{...round,...fields}})
-  const finishRound=winner=>change({stage:'result',winner})
+  const finishRound=suspects=>change({stage:'result',suspects,winner:voteWinner(round.spies,suspects)})
   const reset=()=>{setConfirmExit(false);setGame({...game,round:null})}
   if(!round)return <><Setup settings={settings} update={fields=>setGame({...game,settings:{...settings,...fields}})} start={start}/><Guide/></>
   return <section className="panel mx-auto max-w-[680px] text-center" aria-label="دور جاری">
@@ -27,7 +27,7 @@ export default function Spy(){
       else change({stage:'discussion',deadline:settings.minutes?Date.now()+settings.minutes*60000:null})
     }}/>}
     {round.stage==='discussion'&&<Discussion deadline={round.deadline} onVote={()=>change({stage:'vote'})}/>}
-    {round.stage==='vote'&&<Vote round={round} onVote={suspects=>finishRound(voteWinner(round.spies,suspects))}/>}
+    {round.stage==='vote'&&<Vote round={round} onVote={finishRound}/>}
     {round.stage==='result'&&<Outcome round={round} start={start} reset={reset}/>}
     {round.stage!=='result'&&(confirmExit?<div className="mt-4 rounded-lg border border-slate-600 p-3"><p className="mb-2 text-sm">این دور پایان پیدا کند؟</p><div className="flex justify-center gap-2"><button className="control" onClick={reset}>پایان دور</button><button className="control" onClick={()=>setConfirmExit(false)}>ادامه بازی</button></div></div>:<button className="mt-4 min-h-10 text-sm text-slate-300 underline" onClick={()=>setConfirmExit(true)}>خروج از دور</button>)}
   </section>
