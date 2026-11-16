@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">چشم متحرک جاسوس</title>
+  <desc id="desc">چشمی که به چپ و راست نگاه می‌کند و پلک می‌زند</desc>
+  <style>
+    .eye { transform-box: view-box; transform-origin: 256px 256px; animation: blink 4s ease-in-out infinite; }
+    .iris { transform-box: view-box; transform-origin: 256px 256px; animation: look 4s ease-in-out infinite; }
+    @keyframes look {
+      0%, 10%, 44%, 50%, 84%, 100% { transform: translateX(0); }
+      18%, 36% { transform: translateX(-72px); }
+      58%, 76% { transform: translateX(72px); }
+    }
+    @keyframes blink {
+      0%, 34%, 40%, 78%, 84%, 100% { transform: scaleY(1); }
+      37%, 81% { transform: scaleY(.06); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .eye, .iris { animation: none; }
+    }
+  </style>
+  <defs>
+    <clipPath id="eye-shape">
+      <path d="M72 256Q256 94 440 256Q256 418 72 256Z"/>
+    </clipPath>
+  </defs>
+  <g class="eye">
+    <path d="M62 256Q256 76 450 256Q256 436 62 256Z" fill="#f8edcf"/>
+    <path d="M82 256Q256 112 430 256Q256 400 82 256Z" fill="#fff9ea"/>
+    <g clip-path="url(#eye-shape)">
+      <g class="iris">
+        <circle cx="256" cy="256" r="78" fill="#63d6b3"/>
+        <circle cx="256" cy="256" r="38" fill="#24142f"/>
+        <circle cx="237" cy="235" r="14" fill="#fff"/>
+      </g>
+    </g>
+  </g>
+</svg>

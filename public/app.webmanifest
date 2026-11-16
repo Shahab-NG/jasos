@@ -1,1 +1,1 @@
-{"id":"/","name":"بازی جاسوس","short_name":"جاسوس","lang":"fa","dir":"rtl","start_url":"/","display":"standalone","background_color":"#eee9ff","theme_color":"#eee9ff","icons":[{"src":"/jasos-eye.gif","sizes":"512x512","type":"image/gif","purpose":"any"}]}
+{"id":"/","name":"بازی جاسوس","short_name":"جاسوس","lang":"fa","dir":"rtl","start_url":"/","display":"standalone","background_color":"#eee9ff","theme_color":"#eee9ff","icons":[{"src":"/jasos-eye.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]}
