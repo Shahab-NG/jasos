@@ -18,18 +18,26 @@ export function shuffle(items){
   }
   return result
 }
-export function createRound(settings,used){
+export function restoreGame(game){
+  if(game.round?.stage!=='guess')return game
+  return {...game,round:{...game.round,stage:'result',winner:'citizens'}}
+}
+export function createRound(settings,used,spyQueue=[],previousSpies=[]){
   const pool=categories.filter(c=>!settings.selected.length||settings.selected.includes(c.label)).flatMap(c=>c.words)
   const fresh=pool.filter(word=>!used.includes(word))
   const available=fresh.length?fresh:pool
   const word=available[Math.floor(Math.random()*available.length)]
   const players=Array.from({length:settings.count},(_,id)=>({id,name:settings.names[id]?.trim()||'بازیکن '+fa(id+1)}))
+  const playerIds=players.map(player=>player.id)
+  const queued=spyQueue.filter(id=>playerIds.includes(id))
+  const newIds=playerIds.filter(id=>!queued.includes(id))
+  const queue=queued.length
+    ? [...queued,...shuffle(newIds)]
+    : [...shuffle(newIds.filter(id=>!previousSpies.includes(id))),...shuffle(newIds.filter(id=>previousSpies.includes(id)))]
+  const spies=queue.slice(0,settings.spies)
   return {
-    round:{players:settings.random?shuffle(players):players,spies:shuffle(players.map(p=>p.id)).slice(0,settings.spies),word,stage:'cards',index:0,deadline:null},
+    spyQueue:[...queue.slice(spies.length),...spies],
+    round:{players:settings.random?shuffle(players):players,spies,word,stage:'cards',index:0,deadline:null},
     used:[...(fresh.length?used:used.filter(item=>!pool.includes(item))),word]
   }
-}
-export function matchesWord(guess,word){
-  const normalize=value=>value.normalize('NFKC').replace(/ي/g,'ی').replace(/ك/g,'ک').replace(/[\s\u200c\u200d\u064b-\u065f]/g,'')
-  return normalize(guess)===normalize(word)
 }
