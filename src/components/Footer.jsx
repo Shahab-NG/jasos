@@ -1,2 +1,9 @@
-import React from 'react'
-export default function Footer(){return <footer className="px-4 py-7 text-center text-xs text-slate-400">جاسوس · بازی دورهمی</footer>}
+import React from "react";
+export default function Footer() {
+  return (
+    <footer className="px-4 py-7 text-center text-xs leading-6 text-slate-600">
+      <p>جاسوس · بازی دورهمی</p>
+      <p>😍 ساخته شده توسط شهاب</p>
+    </footer>
+  );
+}

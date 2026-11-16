@@ -1,6 +1,7 @@
 import {categories} from './words.js'
 export const fa = n => Number(n).toLocaleString('fa-IR')
 export const spyLimit = n => Math.floor((n-1)/2)
+export const voteWinner = (spies,suspects) => spies.length===suspects.length&&spies.every(id=>suspects.includes(id))?'citizens':'spies'
 export const defaults = {count:6,spies:1,minutes:0,random:false,selected:[],names:[]}
 const key='jasos.spy.v1'
 export function read(){
